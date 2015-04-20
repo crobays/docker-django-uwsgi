@@ -1,0 +1,6 @@
+django==1.8
+django-debug-toolbar
+django-htmlmin
+easy-thumbnails
+mysql-python
+pillow
