@@ -59,8 +59,7 @@ RUN echo '/sbin/my_init' > /root/.bash_history
 RUN echo "#!/bin/bash\necho \"\$TIMEZONE\" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata" > /etc/my_init.d/01-timezone.sh
 ADD /scripts/uwsgi-config.sh /etc/my_init.d/02-uwsgi-config.sh
 ADD /scripts/django-config.sh /etc/my_init.d/03-django-config.sh
-ADD /scripts/static-symlinks.sh /etc/my_init.d/04-static-symlinks.sh
-ADD /scripts/django-config.sh /etc/my_init.d/05-git-config.sh
+ADD /scripts/django-config.sh /etc/my_init.d/04-git-config.sh
 
 RUN mkdir /etc/service/uwsgi
 ADD /scripts/uwsgi-run.sh /etc/service/uwsgi/run
