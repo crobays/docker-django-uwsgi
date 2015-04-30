@@ -59,7 +59,8 @@ RUN echo '/sbin/my_init' > /root/.bash_history
 RUN echo "#!/bin/bash\necho \"\$TIMEZONE\" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata" > /etc/my_init.d/01-timezone.sh
 ADD /scripts/uwsgi-config.sh /etc/my_init.d/02-uwsgi-config.sh
 ADD /scripts/django-config.sh /etc/my_init.d/03-django-config.sh
-ADD /scripts/django-config.sh /etc/my_init.d/04-git-config.sh
+ADD /scripts/git-config.sh /etc/my_init.d/04-git-config.sh
+RUN echo "#!/bin/bash\n echo \"Running in \$ENVIRONMENT...\"" > /etc/my_init.d/99-environment-message.sh
 
 RUN mkdir /etc/service/uwsgi
 ADD /scripts/uwsgi-run.sh /etc/service/uwsgi/run

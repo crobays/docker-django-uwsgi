@@ -56,10 +56,11 @@ then
 fi
 
 export APPLICATION_ENV="${APPLICATION_ENV:-$ENVIRONMENT}"
-if [ "${APPLICATION_ENV:0:3}" != "dev" ]
+if [ "${APPLICATION_ENV:0:3}" == "dev" ]
 then
+	rm -rf /etc/service/uwsgi
+else
 	rm -rf /etc/service/runsv
-	rm -f /etc/my_init.d/*-static-symlinks.sh
 fi
 
 if [ ! -f /project/requirements.txt ]
