@@ -23,8 +23,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
 	apt-get -y dist-upgrade && \
-	apt-get install -y software-properties-common && \
-	apt-get update
+	apt-get install -y software-properties-common
 
 RUN apt-get install -y \
 	python-software-properties \
@@ -33,6 +32,7 @@ RUN apt-get install -y \
 	python-setuptools \
 	sqlite3 \
 	libmysqlclient-dev \
+	libjpeg-dev \
 	supervisor
 
 # install uwsgi now because it takes a little while
@@ -45,8 +45,7 @@ ENV TIMEZONE Etc/UTC
 ENV ENVIRONMENT production
 ENV PYTHON_VERSION 2
 ENV CODE_DIR src
-ENV PROJECT_NAME main
-ENV CUSTOM_BOILERPLATE false
+ENV CUSTOM_BOILERPLATE true
 
 VOLUME /project
 WORKDIR /project

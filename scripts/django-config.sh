@@ -85,14 +85,14 @@ source /root/.bashrc
 /project/bin/pip install -r /project/requirements.txt
 fix_python_exec_path
 
-if [ ! -d /project/$CODE_DIR ]
+if [ ! -f /project/$CODE_DIR/manage.py ]
 then
+	mkdir -p /project/$CODE_DIR
 	if [ "$CUSTOM_BOILERPLATE" == "false" ] || [ "$CUSTOM_BOILERPLATE" == "False" ] || [ "$CUSTOM_BOILERPLATE" == "0" ]
-	then
-		mkdir -p /project/$CODE_DIR
-		/project/bin/django-admin.py startproject $PROJECT_NAME /project/$CODE_DIR
+	then	
+		/project/bin/django-admin.py startproject main /project/$CODE_DIR
 	else
-		cp --recursive /conf/project-boilerplate /project/$CODE_DIR
+		cp --recursive /conf/project-boilerplate/* /project/$CODE_DIR
 		fix_python_exec_path
 
 		if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
@@ -106,7 +106,6 @@ then
 			find_replace_add_string_to_file "SECRET_KEY = 'secret'" "SECRET_KEY = '$secret'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Secret"
 		fi
 	fi
-	mkdir /project/$CODE_DIR/templates
 fi
 
 # if [ ! -d /project/$CODE_DIR/$PROJECT_NAME/$APP_NAME ]
@@ -119,21 +118,30 @@ fi
 # 	fix_python_exec_path
 # fi
 
+manage_py="manage.py"
+if [ -f /project/$CODE_DIR/manage-docker.py ]
+then
+	manage_py="manage-docker.py"
+fi
+
+if [ ! -d /project/static ]
+then
+	python /project/$CODE_DIR/$manage_py collectstatic --noinput --link
+fi
+
+mkdir -p /project/data
+if [ ! -f /project/data/.migrated ]
+then
+	echo $(date) > /project/data/.migrated
+	python /project/$CODE_DIR/$manage_py migrate
+fi
+
+if [ ! -f /project/data/.gitignore ]
+then
+	echo "*" > /project/data/.gitignore
+fi
+
 echo "code directory: $CODE_DIR"
 echo "project: $CODE_DIR/$PROJECT_NAME"
-
-
-
-if [ ! -d /project/static/admin ]
-then
-	mkdir -p /project/static
-	python_dir=$(ls -r /project/lib | head -n 1)
-	if [ -d /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin ]
-	then
-		cp -r /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin /project/static/admin
-	else
-		echo "No static files for admin found: /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin"
-	fi
-fi
 
 env
