@@ -17,6 +17,10 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
+PROJECT_DIR = os.path.dirname(BASE_DIR);
+
+DATA_DIR = os.path.join(PROJECT_DIR, 'data');
+
 APPLICATION_ENV = os.environ.get('APPLICATION_ENV', 'production')
 
 # Gets error reports when not in DEBUG mode
@@ -114,7 +118,7 @@ KEEP_COMMENTS_ON_MINIFYING = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -139,8 +143,8 @@ if os.environ.get('DB_PORT_3306_TCP_ADDR'):
 if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'test.db'),
-        'TEST_NAME': os.path.join(BASE_DIR, 'test.db'),
+        'NAME': os.path.join(DATA_DIR, 'test.db'),
+        'TEST_NAME': os.path.join(DATA_DIR, 'test.db'),
     }
 
 # Internationalization
