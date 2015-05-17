@@ -23,8 +23,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
 	apt-get -y dist-upgrade && \
-	apt-get install -y software-properties-common && \
-	apt-get update
+	apt-get install -y software-properties-common
 
 RUN apt-get install -y \
 	python-software-properties \
