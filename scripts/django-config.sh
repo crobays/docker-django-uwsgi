@@ -119,21 +119,18 @@ fi
 # 	fix_python_exec_path
 # fi
 
+manage_py="manage.py"
+if [ -f /project/$CODE_DIR/manage-docker.py ]
+then
+	manage_py="manage-docker.py"
+fi
+
+if [ ! -d /project/static ]
+then
+	python /project/$CODE_DIR/$manage_py collectstatic --noinput --link
+fi
+
 echo "code directory: $CODE_DIR"
 echo "project: $CODE_DIR/$PROJECT_NAME"
-
-
-
-if [ ! -d /project/static/admin ]
-then
-	mkdir -p /project/static
-	python_dir=$(ls -r /project/lib | head -n 1)
-	if [ -d /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin ]
-	then
-		cp -r /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin /project/static/admin
-	else
-		echo "No static files for admin found: /project/lib/$python_dir/site-packages/django/contrib/admin/static/admin"
-	fi
-fi
 
 env
