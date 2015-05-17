@@ -32,6 +32,7 @@ RUN apt-get install -y \
 	python-setuptools \
 	sqlite3 \
 	libmysqlclient-dev \
+	libjpeg-dev \
 	supervisor
 
 # install uwsgi now because it takes a little while
