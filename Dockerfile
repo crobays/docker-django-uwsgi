@@ -41,6 +41,10 @@ RUN easy_install pip
 RUN pip install uwsgi
 RUN pip install virtualenv
 
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib && \
+	ln -sf /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib && \
+	ln -sf /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
+
 # Exposed ENV
 ENV TIMEZONE Etc/UTC
 ENV ENVIRONMENT production
