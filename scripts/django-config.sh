@@ -76,6 +76,7 @@ echo -e '#!/bin/bash' > /root/.bashrc
 echo -e 'export PATH="/project/bin:$PATH"' >> /root/.bashrc
 echo -e 'export APPLICATION_ENV="${APPLICATION_ENV:-$ENVIRONMENT}"' >> /root/.bashrc
 echo -e 'source /project/bin/activate' >> /root/.bashrc
+echo -e 'cd /project' >> /root/.bashrc
 chmod +x /project/bin/*
 chmod +x /root/.bashrc
 

@@ -14,6 +14,7 @@
 
 FROM phusion/baseimage:0.9.16
 ENV HOME /root
+RUN rm -f /etc/service/sshd/down
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 CMD ["/sbin/my_init"]
 
@@ -51,7 +52,7 @@ VOLUME /project
 WORKDIR /project
 
 # HTTP ports
-EXPOSE 8000 9090
+EXPOSE 8000 9090 2222
 
 RUN echo '/sbin/my_init' > /root/.bash_history
 
@@ -59,6 +60,7 @@ RUN echo "#!/bin/bash\necho \"\$TIMEZONE\" > /etc/timezone && dpkg-reconfigure -
 ADD /scripts/uwsgi-config.sh /etc/my_init.d/02-uwsgi-config.sh
 ADD /scripts/django-config.sh /etc/my_init.d/03-django-config.sh
 ADD /scripts/git-config.sh /etc/my_init.d/04-git-config.sh
+ADD /scripts/sshd-config.sh /etc/my_init.d/05-sshd-config.sh
 RUN echo "#!/bin/bash\n echo \"Running in \$ENVIRONMENT...\"" > /etc/my_init.d/99-environment-message.sh
 
 RUN mkdir /etc/service/uwsgi

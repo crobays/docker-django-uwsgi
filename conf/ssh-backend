@@ -1,0 +1,11 @@
+#!/bin/bash
+dir="$(dirname $0)"
+dir="$(dirname $dir)"
+ip="$(cat $dir/ignore/backend-ip.txt)"
+ssh \
+	root@$ip \
+	-q \
+	-p 2222 \
+	-i $dir/ignore/ssh-key \
+	-o "StrictHostKeyChecking no" \
+	-o "UserKnownHostsFile=/dev/null"
