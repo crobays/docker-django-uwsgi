@@ -30,10 +30,12 @@ RUN apt-get install -y \
 	python-software-properties \
 	python \
 	python-dev \
+	python-psycopg2 \
 	python-setuptools \
-	sqlite3 \
-	libmysqlclient-dev \
 	libjpeg-dev \
+	libmysqlclient-dev \
+	libpq-dev \
+	sqlite3 \
 	supervisor
 
 # install uwsgi now because it takes a little while

@@ -3,4 +3,5 @@ django-debug-toolbar
 django-htmlmin
 easy-thumbnails
 mysql-python
+psycopg2
 pillow
