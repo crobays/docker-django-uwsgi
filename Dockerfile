@@ -26,6 +26,7 @@ RUN apt-get update && \
 	apt-get install -y software-properties-common
 
 RUN apt-get install -y \
+	build-essential \
 	python-software-properties \
 	python \
 	python-dev \
@@ -35,7 +36,9 @@ RUN apt-get install -y \
 	libmysqlclient-dev \
 	libpq-dev \
 	sqlite3 \
-	supervisor
+	supervisor \
+	libxml2-dev \
+	libxslt-dev
 
 # install uwsgi now because it takes a little while
 RUN easy_install pip
