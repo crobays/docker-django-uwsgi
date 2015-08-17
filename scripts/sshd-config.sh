@@ -6,6 +6,8 @@ then
 	exit 0
 fi
 
+rm -rf /etc/service/sshd/down
+
 ifconfig |
 	grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' |
 	grep -Eo '([0-9]*\.){3}[0-9]*' |
@@ -25,11 +27,11 @@ then
 	ssh-keygen -q -f $ssh_key -N '' -t rsa
 fi
 
-if [ ! -d /project/bin ]
-then
-	mkdir /project/bin
-fi
-cp /conf/ssh-backend /project/bin/ssh-backend
+# if [ ! -d /project/bin ]
+# then
+# 	mkdir /project/bin
+# fi
+# cp /conf/ssh-backend /project/bin/ssh-backend
 
 if [ ! -d /root/.ssh ]
 then
