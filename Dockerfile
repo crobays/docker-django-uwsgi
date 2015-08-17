@@ -49,6 +49,7 @@ RUN ln -sf /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib && \
 # Exposed ENV
 ENV TIMEZONE Etc/UTC
 ENV ENVIRONMENT production
+ENV APP_NAME main
 ENV PYTHON_VERSION 2
 ENV CODE_DIR src
 ENV CUSTOM_BOILERPLATE true

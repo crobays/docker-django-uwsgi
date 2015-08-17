@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP, STATICFILES_FINDERS as SFF
 
-from django.core.urlresolvers import reverse_lazy
+from django.utils.six.moves.urllib.parse import urljoinimport
 import os
 import sys
 
@@ -69,7 +69,7 @@ INSTALLED_APPS = (
 )
 
 PROJECT_APPS = (
-    'main',
+    os.environ.get('APP_NAME', 'main'),
 )
 
 INSTALLED_APPS += PROJECT_APPS
@@ -89,9 +89,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 
-ROOT_URLCONF = 'main.urls'
+ROOT_URLCONF = '{}.urls'.format(os.environ.get('APP_NAME', 'main'))
 
-# WSGI_APPLICATION = 'main.wsgi.application'
+# WSGI_APPLICATION = '{}.wsgi.application'.format(os.environ.get('APP_NAME', 'main'))
 
 # Authentication model
 # AUTH_USER_MODEL = 'users.User'
