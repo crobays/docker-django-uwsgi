@@ -134,17 +134,17 @@ then
 	python /project/$CODE_DIR/$manage_py collectstatic --noinput --link
 fi
 
-mkdir -p /project/data
-if [ ! -f /project/data/.migrated ]
-then
-	echo $(date) > /project/data/.migrated
-	python /project/$CODE_DIR/$manage_py migrate
-fi
+# mkdir -p /project/data
+# if [ ! -f /project/data/.migrated ]
+# then
+# 	echo $(date) > /project/data/.migrated
+# 	python /project/$CODE_DIR/$manage_py migrate
+# fi
 
-if [ ! -f /project/data/.gitignore ]
-then
-	echo "*" > /project/data/.gitignore
-fi
+# if [ ! -f /project/data/.gitignore ]
+# then
+# 	echo "*" > /project/data/.gitignore
+# fi
 
 echo "code directory: $CODE_DIR"
 echo "project: $CODE_DIR/$PROJECT_NAME"
