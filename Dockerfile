@@ -22,10 +22,10 @@ ENV DOCKER_NAME django-uwsgi
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-	apt-get -y dist-upgrade && \
-	apt-get install -y software-properties-common
+	apt-get -y dist-upgrade
 
 RUN apt-get install -y \
+	software-properties-common \
 	build-essential \
 	python-software-properties \
 	python \
@@ -35,10 +35,10 @@ RUN apt-get install -y \
 	libjpeg-dev \
 	libmysqlclient-dev \
 	libpq-dev \
-	sqlite3 \
-	supervisor \
 	libxml2-dev \
-	libxslt-dev
+	libxslt-dev \
+	sqlite3 \
+	supervisor
 
 # install uwsgi now because it takes a little while
 RUN easy_install pip
