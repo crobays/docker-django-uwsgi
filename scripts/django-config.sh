@@ -75,12 +75,16 @@ fix_python_exec_path
 echo -e '#!/bin/bash' > /root/.bashrc
 echo -e 'export PATH="/project/bin:$PATH"' >> /root/.bashrc
 echo -e 'export APPLICATION_ENV="${APPLICATION_ENV:-$ENVIRONMENT}"' >> /root/.bashrc
+echo -e 'export VIRTUAL_ENV_DISABLE_PROMPT="1"' >> /root/.bashrc
 echo -e 'source /project/bin/activate' >> /root/.bashrc
 echo -e 'cd /project' >> /root/.bashrc
 chmod +x /project/bin/*
 chmod +x /root/.bashrc
 
 find_replace_add_string_to_file "VIRTUAL_ENV=.*" "VIRTUAL_ENV=\"\$PWD\";if [ -d /project ];then VIRTUAL_ENV=\"/project\";fi" /project/bin/activate "Modify activate script"
+
+find_replace_add_string_to_file "export PYTHONPATH=\"/project/\$CODE_DIR\"" /project/bin/activate
+find_replace_add_string_to_file "export DJANGO_SETTINGS_MODULE=\"\$APP_NAME.settings.\$ENVIRONMENT\"" /project/bin/activate
 
 source /root/.bashrc
 /project/bin/pip install -r /project/requirements.txt
