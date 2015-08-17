@@ -115,29 +115,34 @@ KEEP_COMMENTS_ON_MINIFYING = True
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+DATABASES = {}
+
+if os.environ.get('DB_PORT_5432_TCP_ADDR'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': os.environ.get('DB_PORT_5432_TCP_ADDR'),
+        'NAME': os.environ.get('DB_ENV_POSTGRES_DB'),
+        'USER': os.environ.get('DB_ENV_POSTGRES_USER'),
+        'PASSWORD': os.environ.get('DB_ENV_POSTGRES_PASSWORD'),
+        'CONN_MAX_AGE': 300,
+        'ATOMIC_REQUESTS': True,
+    }
+elif os.environ.get('DB_PORT_3306_TCP_ADDR'):
+    DATABASES['default'] = {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': os.environ.get('DB_PORT_3306_TCP_ADDR'),
+            'NAME': os.environ.get('DB_ENV_MYSQL_DATABASE'),
+            'USER': os.environ.get('DB_ENV_MYSQL_USER'),
+            'PASSWORD': os.environ.get('DB_ENV_MYSQL_PASSWORD'),
+            'CONN_MAX_AGE': 300,
+            'ATOMIC_REQUESTS': True,
+    }
+else:
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(DATA_DIR, 'db.sqlite3'),
     }
-}
 
-
-if os.environ.get('DB_PORT_3306_TCP_ADDR'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': os.environ.get('DB_PORT_3306_TCP_ADDR'),
-            'NAME': os.environ.get('DB_ENV_DATABASE'),
-            'USER': os.environ.get('DB_ENV_USER'),
-            'PASSWORD': os.environ.get('DB_ENV_PASS'),
-            'CONN_MAX_AGE': 300,
-            'ATOMIC_REQUESTS': True,
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            }
-        }
-    }
 
 # Running test
 if 'test' in sys.argv:
