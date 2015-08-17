@@ -178,7 +178,14 @@ PHONENUMBER_DEFAULT_REGION = LANGUAGE_CODE.upper()
 MEDIA_URL = '{}/media/'.format(os.environ.get('ASSETS_HOST', ''))
 STATIC_URL = '{}/static/'.format(os.environ.get('ASSETS_HOST', ''))
 
-# # Static root
+# Media setup
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
+
+APP_STATIC_URL = urljoin(STATIC_URL, "app/")
+APP_STATIC_IMAGES_URL = urljoin(MEDIA_URL, "images/")
+APP_STATIC_DIST_URL = urljoin(APP_STATIC_URL, "dist/")
+
+# Static root
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 
 # STATICFILES_DIRS = (
