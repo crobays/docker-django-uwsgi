@@ -59,6 +59,7 @@ export APPLICATION_ENV="${APPLICATION_ENV:-$ENVIRONMENT}"
 if [ "${APPLICATION_ENV:0:3}" == "dev" ]
 then
 	rm -rf /etc/service/uwsgi
+	dev=1
 else
 	rm -rf /etc/service/runsv
 fi
@@ -87,7 +88,14 @@ find_replace_add_string_to_file "export PYTHONPATH=\"/project/\$CODE_DIR\"" /pro
 find_replace_add_string_to_file "export DJANGO_SETTINGS_MODULE=\"\$APP_NAME.settings.\$ENVIRONMENT\"" /project/bin/activate
 
 source /root/.bashrc
-/project/bin/pip install -r /project/requirements.txt
+
+requirements_file="/project/requirements.txt"
+if [ -f /project/requirements.txt ] && [ $dev ]
+then
+	requirements_file="/project/requirements_dev.txt"
+fi
+
+/project/bin/pip install -r $requirements_file
 fix_python_exec_path
 
 if [ ! -f /project/$CODE_DIR/manage.py ]
