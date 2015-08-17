@@ -96,16 +96,16 @@ then
 		cp --recursive /conf/project-boilerplate/* /project/$CODE_DIR
 		fix_python_exec_path
 
-		if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
-		then
-			find_replace_add_string_to_file "TIME_ZONE = .*" "TIME_ZONE = '$TIMEZONE'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Timezone"
-		fi
+		# if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
+		# then
+		# 	find_replace_add_string_to_file "TIME_ZONE = .*" "TIME_ZONE = '$TIMEZONE'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Timezone"
+		# fi
 
-		if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
-		then
-			secret="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)"
-			find_replace_add_string_to_file "SECRET_KEY = 'secret'" "SECRET_KEY = '$secret'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Secret"
-		fi
+		# if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
+		# then
+		# 	secret="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)"
+		# 	find_replace_add_string_to_file "SECRET_KEY = 'secret'" "SECRET_KEY = '$secret'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Secret"
+		# fi
 	fi
 fi
 

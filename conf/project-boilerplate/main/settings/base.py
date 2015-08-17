@@ -157,7 +157,7 @@ if 'test' in sys.argv:
 
 LANGUAGE_CODE = 'en'
 
-TIME_ZONE = 'Etc/UTC'
+TIME_ZONE = os.environ.get('TIMEZONE', 'Etc/UTC')
 
 USE_I18N = True
 
