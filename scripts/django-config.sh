@@ -69,6 +69,11 @@ then
 	cp /conf/requirements.txt /project/requirements.txt
 fi
 
+if [ ! -f /project/requirements_dev.txt ]
+then
+	cp /conf/requirements_dev.txt /project/requirements_dev.txt
+fi
+
 virtualenv /project --python "python$PYTHON_VERSION"
 rm -rf /project/local
 fix_python_exec_path
