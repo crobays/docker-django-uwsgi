@@ -1,6 +1,0 @@
-django==1.8.*
-django-htmlmin
-easy-thumbnails
-mysql-python
-psycopg2
-pillow

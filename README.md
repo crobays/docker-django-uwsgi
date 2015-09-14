@@ -9,15 +9,16 @@ for python applications and allows lots of flexibility.
 Feel free to clone this and modify it to your liking. And feel free to 
 contribute patches.
 
-### Build and run
-    docker build -t webapp .
+### Run in current project
     docker run \
-        -v ./:/project \
-        -e PUBLIC_PATH=/project/app \
+        -v $PWD/:/project \
         -e TIMEZONE=Etc/UTC \
-        -p 80:80 \
-        -it --rm \
-        webapp
+        -e ENVIRONMENT=development \
+        -e APP_NAME=main \
+        -e BOILERPLATE_ZIP_URL="https://github.com/crobays/boilerplate-django/archive/master.zip" \
+        -p 80:8000 \
+        -it \
+        crobays/django-uwsgi
 
 ### How to insert your application
 

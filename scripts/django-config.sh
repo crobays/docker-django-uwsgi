@@ -6,7 +6,14 @@ function find_replace_add_string_to_file() {
 	replace_escaped="${2//\//\\/}"
 	file="$3"
 	label="$4"
-	if grep -q ";$find" "$file" # The exit status is 0 (true) if the name was found, 1 (false) if not
+	if [ "$file" == "" ]
+	then
+		file="$replace"
+		replace="$find"
+		find=0
+		action="Added"
+		echo -e "\n$replace" >> "$file"
+	elif grep -q ";$find" "$file" # The exit status is 0 (true) if the name was found, 1 (false) if not
 	then
 		action="Uncommented"
 		sed -i "s/;$find/$replace_escaped/" "$file"
@@ -22,8 +29,8 @@ function find_replace_add_string_to_file() {
 		action="Overwritten"
 		sed -i "s/$find/$replace_escaped/" "$file"
 	else
-		action="Added"
-		echo -e "\n$replace\n" >> "$file"
+		action="Not found: Added"
+		echo -e "\n$replace" >> "$file"
 	fi
 	echo " ==> Setting $label ($action) [$replace in $file]"
 }
@@ -47,12 +54,49 @@ function fix_python_exec_path()
 	done
 }
 
-# install django, normally you would remove this step because your project would already
-# be installed in the code/app/ directory
-
-if [ ! -d /project ]
+if [ ! -d "/project/$CODE_DIR/$APP_NAME" ]
 then
-	mkdir -p /project
+	if [ "$BOILERPLATE_ZIP_URL" == "" ] || [ "$BOILERPLATE_ZIP_URL" == "false" ] || [ "$BOILERPLATE_ZIP_URL" == "False" ] || [ "$BOILERPLATE_ZIP_URL" == "0" ]
+	then
+		/project/bin/django-admin.py startproject $APP_NAME /project/$CODE_DIR
+	else
+		fix_python_exec_path
+		cd /project
+		curl \
+			--location \
+			--url "$BOILERPLATE_ZIP_URL" \
+			--output boilerplate.zip
+
+		unzip -d ./boilerplate-extract boilerplate.zip
+		rm boilerplate.zip
+		mv --no-clobber boilerplate-extract/$(ls boilerplate-extract)/* ./
+		mv --no-clobber boilerplate-extract/$(ls boilerplate-extract)/.* ./
+		rm --recursive --force ./boilerplate-extract
+		rm -f media/.gitkeep
+
+		if [ "$CODE_DIR" != 'src' ] && [ -d "/project/src" ] && [ ! -d "/project/$CODE_DIR" ]
+		then
+			mv "/project/src" "/project/$CODE_DIR"
+		fi
+
+		if [ "$APP_NAME" != 'main' ] && [ -d "/project/$CODE_DIR/main" ] && [ ! -d "/project/$CODE_DIR/$APP_NAME" ]
+		then
+			mv "/project/$CODE_DIR/main" "/project/$CODE_DIR/$APP_NAME"
+		fi
+
+	fi
+
+	if [ ! -d /project/data ]
+	then
+		mkdir -p /project/data
+		echo "*" > /project/data/.gitignore
+	fi
+
+	if [ -d /project/media ]
+	then
+		chmod -R 777 /project/media
+	fi
+
 fi
 
 export APPLICATION_ENV="${APPLICATION_ENV:-$ENVIRONMENT}"
@@ -64,19 +108,14 @@ else
 	rm -rf /etc/service/runsv
 fi
 
-if [ ! -f /project/requirements.txt ]
+if [ ! -f "/project/bin/python$PYTHON_VERSION" ]
 then
-	cp /conf/requirements.txt /project/requirements.txt
+	rm -rf /project/bin /project/include
+	# Creates ./bin ./include ./lib ./local
+	virtualenv /project --python "python$PYTHON_VERSION"
+	# Removes ./local
+	rm -rf /project/local
 fi
-
-if [ ! -f /project/requirements_dev.txt ]
-then
-	cp /conf/requirements_dev.txt /project/requirements_dev.txt
-fi
-
-virtualenv /project --python "python$PYTHON_VERSION"
-rm -rf /project/local
-fix_python_exec_path
 
 echo -e '#!/bin/bash' > /root/.bashrc
 echo -e 'export PATH="/project/bin:$PATH"' >> /root/.bashrc
@@ -88,9 +127,8 @@ chmod +x /project/bin/*
 chmod +x /root/.bashrc
 
 find_replace_add_string_to_file "VIRTUAL_ENV=.*" "VIRTUAL_ENV=\"\$PWD\";if [ -d /project ];then VIRTUAL_ENV=\"/project\";fi" /project/bin/activate "Modify activate script"
-
-find_replace_add_string_to_file "export PYTHONPATH=\"/project/\$CODE_DIR\"" /project/bin/activate
-find_replace_add_string_to_file "export DJANGO_SETTINGS_MODULE=\"\$APP_NAME.settings.\$ENVIRONMENT\"" /project/bin/activate
+find_replace_add_string_to_file "if [ ! \$PYTHONPATH ]\nthen\nexport PYTHONPATH=\"/project/\$CODE_DIR\"\nfi" /project/bin/activate
+find_replace_add_string_to_file "if [ ! \$DJANGO_SETTINGS_MODULE ]\nthen\nexport DJANGO_SETTINGS_MODULE=\"\$APP_NAME.settings.\$ENVIRONMENT\"\nfi" /project/bin/activate
 
 source /root/.bashrc
 
@@ -99,67 +137,14 @@ if [ -f /project/requirements.txt ] && [ $dev ]
 then
 	requirements_file="/project/requirements_dev.txt"
 fi
+/project/bin/pip install --upgrade pip
+/project/bin/pip install --upgrade --requirement $requirements_file
 
-/project/bin/pip install -r $requirements_file
 fix_python_exec_path
-
-if [ ! -f /project/$CODE_DIR/manage.py ]
-then
-	mkdir -p /project/$CODE_DIR
-	if [ "$CUSTOM_BOILERPLATE" == "false" ] || [ "$CUSTOM_BOILERPLATE" == "False" ] || [ "$CUSTOM_BOILERPLATE" == "0" ]
-	then	
-		/project/bin/django-admin.py startproject main /project/$CODE_DIR
-	else
-		cp --recursive /conf/project-boilerplate/* /project/$CODE_DIR
-		fix_python_exec_path
-
-		# if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
-		# then
-		# 	find_replace_add_string_to_file "TIME_ZONE = .*" "TIME_ZONE = '$TIMEZONE'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Timezone"
-		# fi
-
-		# if [ $TIMEZONE ] && [ -f /project/$CODE_DIR/$PROJECT_NAME/settings/base.py ]
-		# then
-		# 	secret="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)"
-		# 	find_replace_add_string_to_file "SECRET_KEY = 'secret'" "SECRET_KEY = '$secret'" /project/$CODE_DIR/$PROJECT_NAME/settings/base.py "Set $PROJECT_NAME/settings/base Secret"
-		# fi
-	fi
-fi
-
-# if [ ! -d /project/$CODE_DIR/$PROJECT_NAME/$APP_NAME ]
-# then
-# 	if [ $APP_TEMPLATE ]
-# 	then
-# 		template="--template=$APP_TEMPLATE"
-# 	fi
-# 	/project/bin/django-admin.py startapp $template $APP_NAME /project/$CODE_DIR/$PROJECT_NAME
-# 	fix_python_exec_path
-# fi
-
-manage_py="manage.py"
-if [ -f /project/$CODE_DIR/manage-docker.py ]
-then
-	manage_py="manage-docker.py"
-fi
 
 if [ ! -d /project/static ]
 then
-	python /project/$CODE_DIR/$manage_py collectstatic --noinput --link
+	python /project/$CODE_DIR/manage.py collectstatic --noinput --link
 fi
 
-# mkdir -p /project/data
-# if [ ! -f /project/data/.migrated ]
-# then
-# 	echo $(date) > /project/data/.migrated
-# 	python /project/$CODE_DIR/$manage_py migrate
-# fi
-
-# if [ ! -f /project/data/.gitignore ]
-# then
-# 	echo "*" > /project/data/.gitignore
-# fi
-
-echo "code directory: $CODE_DIR"
-echo "project: $CODE_DIR/$PROJECT_NAME"
-
-env
+echo "project: $CODE_DIR/$APP_NAME"
